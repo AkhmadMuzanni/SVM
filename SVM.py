@@ -4,16 +4,34 @@ Created on Sun Aug 05 21:40:15 2018
 
 @author: USER
 """
+import numpy as np
+import sys
+sys.stdout.write('.')
+sys.stdout.flush()
 
 y = [-1, -1, 1, 1]
-alpha = [1]
-count = 0;
-alpha = 0.0;
-while count < 10:
-    sum = 0
-    alpha += 0.01
-    for yi in y:
-        sum += alpha*yi
-    if (sum == 0):
-        print (alpha)
-        count += 1
+print(len(y))
+alpha = []
+alpha_value = np.arange(0,1,0.1)
+
+# method assignAlpha for search all of possible value of alpha
+def assignAlpha(temp_alpha, depth):
+    if (depth < len(y)):
+        t_alpha = list(temp_alpha)
+        t_alpha.append(0)
+        
+        for alpha_i in alpha_value:            
+            t_alpha[len(t_alpha)-1] = alpha_i
+            if (depth == (len(y) - 1)):
+                t_a = list(t_alpha)
+                alpha.append(t_a)
+                print(str(depth) + ", " + str(alpha_i) + ", " + str(t_alpha))
+                
+            
+            assignAlpha(t_alpha, depth + 1)
+            
+            
+            
+
+assignAlpha([], 0)
+#print(alpha)
