@@ -9,10 +9,10 @@ import sys
 sys.stdout.write('.')
 sys.stdout.flush()
 
-y = [-1, -1, 1, 1]
+y = [-1, -1, -1, 1, 1, 1]
 print(len(y))
 alpha = []
-alpha_value = np.arange(0,1,0.1)
+alpha_value = np.arange(0,3,0.1)
 
 # method assignAlpha for search all of possible value of alpha
 def assignAlpha(temp_alpha, depth):
@@ -24,13 +24,12 @@ def assignAlpha(temp_alpha, depth):
             t_alpha[len(t_alpha)-1] = alpha_i
             if (depth == (len(y) - 1)):
                 t_a = list(t_alpha)
-                alpha.append(t_a)
-                print(str(depth) + ", " + str(alpha_i) + ", " + str(t_alpha))
-                
+                #requirement for alpha (alpha . y = 0)
+                if (np.dot(t_a,y) == 0):
+                    alpha.append(t_a)
+                    print(str(depth) + ", " + str(alpha_i) + ", " + str(t_a))
             
             assignAlpha(t_alpha, depth + 1)
-            
-            
             
 
 assignAlpha([], 0)
