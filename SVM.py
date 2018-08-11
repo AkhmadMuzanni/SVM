@@ -10,7 +10,7 @@ sys.stdout.write('.')
 sys.stdout.flush()
 
 y = [-1, -1, 1, 1]
-x = [(7,17),(10,16),(9,22),(16,18)]
+x = [[7,17],[10,16],[9,22],[16,18]]
 print(len(y))
 alpha = []
 L_value = []
@@ -43,17 +43,28 @@ def assignAlpha(temp_alpha, depth):
             
             assignAlpha(t_alpha, depth + 1)
 
+# method for find maximum value of Lagrange multiplier
 def findMaxL():
     max_L = -999
     max_alpha = []
     for i in range(len(alpha)):
         if (alpha[i][len(alpha[i]) - 1] > max_L):
             max_L = alpha[i][len(alpha[i]) - 1]
-            max_alpha = alpha[i]
-    return max_L,max_alpha
+            max_alpha = alpha[i]    
+    return max_L,max_alpha[0:4]
 
+def findW():
+    w = []
+    for i in range(len(y)):        
+        w.append(np.dot(max_alpha[i],np.dot(y[i],x[i])))
+    return w
 
 assignAlpha([], 0)
 print("")
 print(findMaxL())
+max_L, max_alpha = findMaxL()
+value = findW()
+#for i in range(len(value)):
+#    print(np.dot(max_alpha[i],value[i]))
+print(value)
 #print(alpha)
