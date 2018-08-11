@@ -45,7 +45,7 @@ def normalization(data):
             res[i][j] = (data[i][j] - min_value) / (max_value - min_value)    
     return res
 
-# method dist to search the distance between elements
+# method dist to search the distance between all elements
 def get_dist(data):
     distance = np.zeros((len(data),len(data)),dtype=float)
     for i in range(len(distance)):
@@ -53,11 +53,20 @@ def get_dist(data):
             distance[i][j] = calc_dist(data[i],data[j])
     return distance
 
+# method calc_dist to calculate the distance between two array
 def calc_dist(array1, array2):
     res = 0.0
     for i in range(len(array1)):
         res += np.power((array1[i] - array2[i]),2)
     return res
+
+# method get_kernel_rbf to calculate the value of kernel RBF from data training
+def get_kernel_rbf(data_dist,theta):
+    kernel = np.zeros_like(data_dist)
+    for i in range(len(data_dist)):
+        for j in range(len(data_dist[i])):
+            kernel[i][j] = np.exp(-(data_dist[i][j]/(2*np.power(theta,2))))
+    return kernel
 
 # MAIN
 
@@ -71,4 +80,8 @@ for data in data_normalisasi:
 
 jarak = get_dist(data_normalisasi)
 for data in jarak:
+    print(data)
+
+kernel = get_kernel_rbf(jarak,0.1)
+for data in kernel:
     print(data)
