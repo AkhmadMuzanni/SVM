@@ -68,6 +68,13 @@ def get_kernel_rbf(data_dist,theta):
             kernel[i][j] = np.exp(-(data_dist[i][j]/(2*np.power(theta,2))))
     return kernel
 
+def get_hessian(kernel_data,lamda):
+    hessian = np.zeros_like(kernel_data)
+    for i in range(len(kernel_data)):
+        for j in range(len(kernel_data[i])):
+            hessian[i][j] = kernel_data[i][j] + np.power(lamda,2)
+    return hessian
+
 # MAIN
 
 dataTraining = read_csv("dataTraining.csv")
@@ -84,4 +91,8 @@ for data in jarak:
 
 kernel = get_kernel_rbf(jarak,0.1)
 for data in kernel:
+    print(data)
+
+hessian_matrix = get_hessian(kernel,0.1)
+for data in hessian_matrix:
     print(data)
