@@ -8,6 +8,7 @@ Created on Sat Aug 11 21:48:34 2018
 import csv
 import numpy as np
 
+# method read_csv for read csv file and save it to array
 def read_csv(file_name):
     array_2D = []
     with open(file_name, 'rb') as csvfile:
@@ -16,22 +17,25 @@ def read_csv(file_name):
             array_2D.append(map(int,row))
     return array_2D
 
+# method get_max to find the maximum value of data
 def get_max(data):
     max_value = -999
     for i in data:        
         for j in i:            
-            if (j > max_value):                
+            if (j > max_value):
                 max_value = j
     return max_value
 
+# method get_min to find the minimum value of data
 def get_min(data):
     min_value = 9999999999
     for i in data:
         for j in i:
             if (j < min_value):
                 min_value = j
-    return min_value            
+    return min_value
 
+# method normalization to convert data to normalized value
 def normalization(data):
     res = np.zeros((len(data),len(data[0])),dtype=float)
     max_value = float(get_max(data))
@@ -41,12 +45,30 @@ def normalization(data):
             res[i][j] = (data[i][j] - min_value) / (max_value - min_value)    
     return res
 
+# method dist to search the distance between elements
+def get_dist(data):
+    distance = np.zeros((len(data),len(data)),dtype=float)
+    for i in range(len(distance)):
+        for j in range(len(distance)):
+            distance[i][j] = calc_dist(data[i],data[j])
+    return distance
+
+def calc_dist(array1, array2):
+    res = 0.0
+    for i in range(len(array1)):
+        res += np.power((array1[i] - array2[i]),2)
+    return res
+
+# MAIN
+
 dataTraining = read_csv("dataTraining.csv")
 for data in dataTraining:
     print(data)
-
 
 data_normalisasi = normalization(dataTraining)
 for data in data_normalisasi:
     print(data)
 
+jarak = get_dist(data_normalisasi)
+for data in jarak:
+    print(data)
