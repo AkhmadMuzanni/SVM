@@ -39,7 +39,7 @@ x2 = np.transpose(np.array(dataTranspose[1:2]))
 x3 = np.transpose(np.array(dataTranspose[2:3]))
 y = np.array(dataTranspose[3:4][0])
 
-#std_x1 = RobustScaler().fit_transform(x1)
+std_x1 = RobustScaler().fit_transform(x1)
 #std_y = RobustScaler().fit_transform(y)
 
 svr_rbf = SVR(kernel='rbf', C=1e2, gamma=0.7, epsilon=0.001)
