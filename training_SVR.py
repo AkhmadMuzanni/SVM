@@ -8,6 +8,7 @@ Created on Sat Aug 11 21:48:34 2018
 import csv
 import numpy as np
 
+
 # method read_csv for read csv file and save it to array
 def read_csv(file_name):
     array_2D = []
@@ -77,6 +78,9 @@ def get_hessian(kernel_data,lamda):
 
 # MAIN
 
+C = 100
+cLR = 0.01
+
 dataTraining = read_csv("dataTraining.csv")
 for data in dataTraining:
     print(data)
@@ -96,3 +100,21 @@ for data in kernel:
 hessian_matrix = get_hessian(kernel,0.1)
 for data in hessian_matrix:
     print(data)
+
+# SEQUENTIAL LEARNING
+
+# Step 1 : Initialize alpha and alpha_star with 0
+alpha = [0] * len(dataTraining)
+alpha_star = [0] * len(dataTraining)
+E_value = [0] * len(dataTraining)
+delta_alpha = [0] * len(dataTraining)
+delta_alpha_star = [0] * len(dataTraining)
+gamma = cLR / get_max(hessian_matrix)
+
+# Step 2 : For each training point, compute :
+# 2.1 : Compute Ei
+y = np.transpose(data_normalisasi)[3]
+for i in range(len(jarak)):
+    sum_prod = np.sum([a*(b-c) for a,b,c in zip(jarak[i], alpha_star, alpha)])
+    E_value[i] = y[i] + sum_prod
+print(gamma)
