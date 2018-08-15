@@ -76,30 +76,37 @@ def get_hessian(kernel_data,lamda):
             hessian[i][j] = kernel_data[i][j] + np.power(lamda,2)
     return hessian
 
+def calc_MSE(prediction, actual):
+    res = np.zeros_like(prediction)
+    for i in range(len(prediction)):
+        res[i] = np.power((actual[i] - prediction[i]),2)
+    return np.average(res)
+
 # MAIN
 
-C = 100
+C_value = 2
 cLR = 0.01
+epsilon = 0.1
 
 dataTraining = read_csv("dataTraining.csv")
-for data in dataTraining:
-    print(data)
+#for data in dataTraining:
+#    print(data)
 
 data_normalisasi = normalization(dataTraining)
-for data in data_normalisasi:
-    print(data)
+#for data in data_normalisasi:
+#    print(data)
 
 jarak = get_dist(data_normalisasi)
-for data in jarak:
-    print(data)
+#for data in jarak:
+#    print(data)
 
 kernel = get_kernel_rbf(jarak,0.1)
-for data in kernel:
-    print(data)
+#for data in kernel:
+#    print(data)
 
 hessian_matrix = get_hessian(kernel,0.1)
-for data in hessian_matrix:
-    print(data)
+#for data in hessian_matrix:
+#    print(data)
 
 # SEQUENTIAL LEARNING
 
@@ -107,14 +114,45 @@ for data in hessian_matrix:
 alpha = [0] * len(dataTraining)
 alpha_star = [0] * len(dataTraining)
 E_value = [0] * len(dataTraining)
-delta_alpha = [0] * len(dataTraining)
-delta_alpha_star = [0] * len(dataTraining)
+delta_alpha = [0.0] * len(dataTraining)
+delta_alpha_star = [0.0] * len(dataTraining)
 gamma = cLR / get_max(hessian_matrix)
 
 # Step 2 : For each training point, compute :
-# 2.1 : Compute Ei
-y = np.transpose(data_normalisasi)[3]
-for i in range(len(jarak)):
-    sum_prod = np.sum([a*(b-c) for a,b,c in zip(jarak[i], alpha_star, alpha)])
-    E_value[i] = y[i] + sum_prod
-print(gamma)
+#for x in range(10):
+x = 0
+while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 450)):
+    # 2.1 : Compute Ei
+    #print("")
+    #print("Iterasi " + str(x))
+    y = np.transpose(data_normalisasi)[3]
+    for i in range(len(jarak)):
+        sum_prod = np.sum([a*(b-c) for a,b,c in zip(jarak[i], alpha_star, alpha)])
+        E_value[i] = y[i] + sum_prod
+    
+    # 2.2 : Compute delta alpha and delta alpha star    
+    delta_alpha_star = [min(max(gamma*(E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha_star)]
+    delta_alpha = [min(max(gamma*(-E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha)]
+    alpha_star = alpha_star + delta_alpha_star
+    
+    # 2.3 : Compute new alpha and alpha star
+    alpha = [a + b for a,b in zip(alpha, delta_alpha)]
+    alpha_star = [a + b for a,b in zip(alpha_star, delta_alpha_star)]
+    #print(alpha_star)
+    #print(alpha)
+    #print(max(delta_alpha_star))
+    #print(max(delta_alpha))
+    x = x+1
+
+# Find the result of prediction
+print("Hasil Prediksi")
+y_prediksi = [np.sum(H*(Y - Z)) for H,Y,Z in zip(hessian_matrix[0],alpha_star,alpha)]
+max_data = float(get_max(dataTraining))
+min_data = float(get_min(dataTraining))
+y_denorm = np.zeros_like(y_prediksi)
+for i in range(len(y_prediksi)):
+    y_denorm[i] = y_prediksi[i] * (max_data-min_data) + min_data
+
+print(y_prediksi)
+print(y_denorm)
+print(calc_MSE(y_prediksi, y))
