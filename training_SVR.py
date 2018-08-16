@@ -18,6 +18,11 @@ def read_csv(file_name):
             array_2D.append(map(int,row))
     return array_2D
 
+def split_data(data, proportion):
+    dataTraining = data[0:int(np.floor(proportion*len(data)))]    
+    dataTesting = data[int(np.floor(proportion*len(data))):len(data)]
+    return dataTraining, dataTesting
+
 # method get_max to find the maximum value of data
 def get_max(data):
     max_value = -999
@@ -37,14 +42,16 @@ def get_min(data):
     return min_value
 
 # method normalization to convert data to normalized value
-def normalization(data):
+def normalization(data, proportion):    
     res = np.zeros((len(data),len(data[0])),dtype=float)
     max_value = float(get_max(data))
     min_value = float(get_min(data))
     for i in range(len(res)):
         for j in range(len(res[i])):
             res[i][j] = (data[i][j] - min_value) / (max_value - min_value)    
-    return res
+    dataTraining = res[0:int(np.floor(proportion*len(data)))]    
+    dataTesting = res[int(np.floor(proportion*len(data))):len(data)]
+    return dataTraining, dataTesting
 
 # method dist to search the distance between all elements
 def get_dist(data):
@@ -88,19 +95,19 @@ C_value = 2
 cLR = 0.01
 epsilon = 0.1
 
-dataTraining = read_csv("dataTraining.csv")
+dataAll = read_csv("dataTraining.csv")
 #for data in dataTraining:
 #    print(data)
 
-data_normalisasi = normalization(dataTraining)
+dataTraining, dataTesting = normalization(dataAll, 0.8)
 #for data in data_normalisasi:
 #    print(data)
 
-jarak = get_dist(data_normalisasi)
+jarak = get_dist(dataTraining)
 #for data in jarak:
 #    print(data)
 
-kernel = get_kernel_rbf(jarak,0.1)
+kernel = get_kernel_rbf(jarak,0.7)
 #for data in kernel:
 #    print(data)
 
@@ -119,13 +126,13 @@ delta_alpha_star = [0.0] * len(dataTraining)
 gamma = cLR / get_max(hessian_matrix)
 
 # Step 2 : For each training point, compute :
-#for x in range(10):
+#for x in range(10): 295
 x = 0
-while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 450)):
+while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 30)):
     # 2.1 : Compute Ei
     #print("")
     #print("Iterasi " + str(x))
-    y = np.transpose(data_normalisasi)[3]
+    y = np.transpose(dataTraining)[3]
     for i in range(len(jarak)):
         sum_prod = np.sum([a*(b-c) for a,b,c in zip(jarak[i], alpha_star, alpha)])
         E_value[i] = y[i] + sum_prod
@@ -146,13 +153,20 @@ while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x
 
 # Find the result of prediction
 print("Hasil Prediksi")
-y_prediksi = [np.sum(H*(Y - Z)) for H,Y,Z in zip(hessian_matrix[0],alpha_star,alpha)]
-max_data = float(get_max(dataTraining))
-min_data = float(get_min(dataTraining))
+#print(np.sum(alpha_star))
+y_prediksi = [0.0] * len(dataTraining)
+for i in range(len(y_prediksi)):
+    y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
+max_data = float(get_max(dataAll))
+min_data = float(get_min(dataAll))
 y_denorm = np.zeros_like(y_prediksi)
 for i in range(len(y_prediksi)):
     y_denorm[i] = y_prediksi[i] * (max_data-min_data) + min_data
 
-print(y_prediksi)
+#print(delta_alpha_star)
+#print(delta_alpha)
+#print(alpha_star)
+#print(alpha)
+#print(y_prediksi)
 print(y_denorm)
 print(calc_MSE(y_prediksi, y))
