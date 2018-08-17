@@ -126,7 +126,7 @@ delta_alpha_star = [0.0] * len(dataTraining)
 gamma = cLR / get_max(hessian_matrix)
 
 # Step 2 : For each training point, compute :
-#for x in range(10): 295
+#for x in range(10)
 x = 0
 while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 30)):
     # 2.1 : Compute Ei
