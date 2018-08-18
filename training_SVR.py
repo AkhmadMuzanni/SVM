@@ -64,7 +64,7 @@ def get_dist(data):
 # method calc_dist to calculate the distance between two array
 def calc_dist(array1, array2):
     res = 0.0
-    for i in range(len(array1)):
+    for i in range(len(array1) - 1):
         res += np.power((array1[i] - array2[i]),2)
     return res
 

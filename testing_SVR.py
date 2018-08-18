@@ -7,6 +7,7 @@ Created on Thu Aug 16 02:37:28 2018
 
 import training_SVR as tr
 import numpy as np
+import matplotlib.pyplot as plt
 
 # count distance for all data
 data_normal = list(tr.dataTraining)
@@ -33,4 +34,16 @@ y_denorm_test = np.zeros_like(y_pred_test)
 for i in range(len(y_pred_test)):
     y_denorm_test[i] = y_pred_test[i] * (tr.max_data-tr.min_data) + tr.min_data
 
-print(y_denorm_test)
+# list parameters for plotting
+y_pred_all = list(tr.y_prediksi)
+y_pred_all.extend(y_pred_test)
+print(y_pred_all)
+print(np.transpose(data_normal)[3])
+thn = range(2004,2018)
+print(thn)
+
+# plotting process
+plt.plot(thn, y_pred_all, color="red", label="Prediksi")
+plt.plot(thn, np.transpose(data_normal)[3], color="green", label="Aktual")
+plt.legend()
+plt.show()
