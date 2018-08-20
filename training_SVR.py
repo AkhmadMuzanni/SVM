@@ -125,10 +125,13 @@ delta_alpha = [0.0] * len(dataTraining)
 delta_alpha_star = [0.0] * len(dataTraining)
 gamma = cLR / get_max(hessian_matrix)
 
+y_prediksi = [0.0] * len(dataTraining)
 # Step 2 : For each training point, compute :
 #for x in range(10)
 x = 0
-while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 30)):
+min_mse = 999999
+iterate = True
+while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 50) and (iterate)):
     # 2.1 : Compute Ei
     #print("")
     #print("Iterasi " + str(x))
@@ -149,14 +152,20 @@ while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x
     #print(alpha)
     #print(max(delta_alpha_star))
     #print(max(delta_alpha))
+    for i in range(len(y_prediksi)):
+        y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])    
+    if (min_mse > calc_MSE(y_prediksi, y)):
+        min_mse = calc_MSE(y_prediksi, y)
+    else:
+        iterate = False
+        print("Iterasi ke-" + str(x-1))
+    #print(min_mse)
     x = x+1
 
 # Find the result of prediction
 print("Hasil Prediksi")
 #print(np.sum(alpha_star))
-y_prediksi = [0.0] * len(dataTraining)
-for i in range(len(y_prediksi)):
-    y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
+
 max_data = float(get_max(dataAll))
 min_data = float(get_min(dataAll))
 y_denorm = np.zeros_like(y_prediksi)
@@ -169,4 +178,4 @@ for i in range(len(y_prediksi)):
 #print(alpha)
 #print(y_prediksi)
 #print(y_denorm)
-print(calc_MSE(y_prediksi, y))
+print(min_mse)
