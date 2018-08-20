@@ -168,5 +168,5 @@ for i in range(len(y_prediksi)):
 #print(alpha_star)
 #print(alpha)
 #print(y_prediksi)
-print(y_denorm)
+#print(y_denorm)
 print(calc_MSE(y_prediksi, y))
