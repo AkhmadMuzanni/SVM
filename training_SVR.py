@@ -89,9 +89,11 @@ def calc_MSE(prediction, actual):
         res[i] = np.power((actual[i] - prediction[i]),2)
     return np.average(res)
 
+
+
 # MAIN
 
-C_value = 2
+C_value = 100
 cLR = 0.01
 epsilon = 0.1
 
@@ -131,7 +133,8 @@ y_prediksi = [0.0] * len(dataTraining)
 x = 0
 min_mse = 999999
 iterate = True
-while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 50) and (iterate)):
+while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 30)):
+#while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 100) and (iterate)):
     # 2.1 : Compute Ei
     #print("")
     #print("Iterasi " + str(x))
@@ -158,12 +161,12 @@ while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x
         min_mse = calc_MSE(y_prediksi, y)
     else:
         iterate = False
-        print("Iterasi ke-" + str(x-1))
+        #print("Iterasi ke-" + str(x-1))
     #print(min_mse)
     x = x+1
 
 # Find the result of prediction
-print("Hasil Prediksi")
+#print("Hasil Prediksi")
 #print(np.sum(alpha_star))
 
 max_data = float(get_max(dataAll))
@@ -178,4 +181,7 @@ for i in range(len(y_prediksi)):
 #print(alpha)
 #print(y_prediksi)
 #print(y_denorm)
-print(min_mse)
+#print(min_mse)
+    
+def get_prediksi():
+    return "test"
