@@ -7,6 +7,7 @@ Created on Sat Aug 11 21:48:34 2018
 
 import csv
 import numpy as np
+import json
 
 
 # method read_csv for read csv file and save it to array
@@ -93,9 +94,9 @@ def calc_MSE(prediction, actual):
 
 # MAIN
 
-C_value = 100
+C_value = 0.02
 cLR = 0.01
-epsilon = 0.1
+epsilon = 0.01
 
 dataAll = read_csv("dataTraining.csv")
 #for data in dataTraining:
@@ -133,8 +134,8 @@ y_prediksi = [0.0] * len(dataTraining)
 x = 0
 min_mse = 999999
 iterate = True
-while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 30)):
-#while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 100) and (iterate)):
+while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 100)):
+#while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 1000) and (iterate)):
     # 2.1 : Compute Ei
     #print("")
     #print("Iterasi " + str(x))
@@ -156,7 +157,7 @@ while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x
     #print(max(delta_alpha_star))
     #print(max(delta_alpha))
     for i in range(len(y_prediksi)):
-        y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])    
+        y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
     if (min_mse > calc_MSE(y_prediksi, y)):
         min_mse = calc_MSE(y_prediksi, y)
     else:
@@ -183,5 +184,11 @@ for i in range(len(y_prediksi)):
 #print(y_denorm)
 #print(min_mse)
     
-def get_prediksi():
-    return "test"
+def get_prediksi(temp):
+    return temp
+def get_input_data():
+    return json.dumps(dataAll)
+def get_distance():
+    return jarak
+def get_hessian():
+    return hessian_matrix
