@@ -1,4 +1,5 @@
 <?php
+require_once('db.php');
 $pyscript = 'C:\\xampp\\htdocs\\estimasi\\training_SVR.py';
 $python = 'C:\\Users\\USER\\Anaconda2\\python.exe';
 $cmd = "$python $pyscript";
