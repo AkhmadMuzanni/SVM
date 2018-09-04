@@ -19,10 +19,10 @@ jarak_all = tr.get_dist(data_normal)
 jarak_testing = jarak_all[len(tr.dataTraining):,:len(tr.dataTraining)]
 
 # calculate the value of kernel RBF for data testing
-kernel_testing = tr.get_kernel_rbf(jarak_testing,0.7)
+kernel_testing = tr.get_kernel_rbf(jarak_testing,tr.sigma)
 
 # calculate hessian matrix for data testing
-hessian_testing = tr.get_hessian(kernel_testing, 0.1)
+hessian_testing = tr.get_hessian(kernel_testing, tr.lamda)
 
 # count y prediction for data testing
 y_pred_test = [0.0] * len(tr.dataTesting)
@@ -37,13 +37,21 @@ for i in range(len(y_pred_test)):
 # list parameters for plotting
 y_pred_all = list(tr.y_prediksi)
 y_pred_all.extend(y_pred_test)
-print(y_pred_all)
-print(np.transpose(data_normal)[3])
+#print(y_pred_all)
+#print(np.transpose(data_normal)[3])
 thn = range(2004,2018)
-print(thn)
+#print(thn)
+
+print("MAX_ITER = " + str(tr.iter_max))
+print("C = " + str(tr.C_value))
+print("SIGMA = " + str(tr.sigma))
+print("LAMBDA = " + str(tr.lamda))
+print("EPSILON = " + str(tr.epsilon))
+print("cLR = " + str(tr.cLR))
 
 # plotting process
 plt.plot(thn, y_pred_all, color="red", label="Prediksi")
 plt.plot(thn, np.transpose(data_normal)[3], color="green", label="Aktual")
 plt.legend()
+#plt.text(0,0,"Testing")
 plt.show()

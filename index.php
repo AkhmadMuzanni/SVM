@@ -43,14 +43,19 @@ echo "<br>";
 			<td>Luas Lahan (X3)</td>
 			<td>Produksi (Y)</td>
 		</tr>
-		<?php foreach ($input as $i) {
+		<?php 
+		$x = 1;
+		foreach ($input as $i) {
+			mysqli_query($link, "INSERT INTO dataAll VALUES ('".$x."', '".$i[0]."', '".$i[1]."', '".$i[2]."', '".$i[3]."')");
 			echo '<tr>';
 			echo '<td>'.$i[0].'</td>';
 			echo '<td>'.$i[1].'</td>';
 			echo '<td>'.$i[2].'</td>';
 			echo '<td>'.$i[3].'</td>';
 			echo '</tr>';
+			$x++;
 		}
+		mysqli_close($link)
 		?>
 	</table>
 </body>

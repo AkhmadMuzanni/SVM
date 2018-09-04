@@ -8,7 +8,9 @@ Created on Sat Aug 11 21:48:34 2018
 import csv
 import numpy as np
 import json
+#import mysql.connector as msql
 
+#db = msql.connect(host="localhost",user="root",passwd="",database="estimasi")
 
 # method read_csv for read csv file and save it to array
 def read_csv(file_name):
@@ -94,15 +96,35 @@ def calc_MSE(prediction, actual):
 
 # MAIN
 
-C_value = 0.02
-cLR = 0.01
-epsilon = 0.01
+C_value = 1000
+cLR = 0.1
+epsilon = 0.0001
+sigma = 0.3
+lamda = 0.1
+iter_max =50000
 
 dataAll = read_csv("dataTraining.csv")
+
+
+
 #for data in dataTraining:
 #    print(data)
 
+#cursor = db.cursor()
+#sql = "INSERT INTO dataAll VALUES (%d %d %d %d %d)"
+#val = (1, 2, 3, 4, 5)
+#cursor.exceute(sql, val)
+#db.commit
+
+
 dataTraining, dataTesting = normalization(dataAll, 0.8)
+x_training = ((np.array(dataTraining))[:,:3]).tolist()
+x_testing = ((np.array(dataTesting))[:,:3]).tolist()
+y_training = ((np.array(dataTraining))[:,-1]).tolist()
+y_testing = ((np.array(dataTesting))[:,-1]).tolist()
+#print(x_training)
+#print(x_testing)
+
 #for data in data_normalisasi:
 #    print(data)
 
@@ -110,11 +132,11 @@ jarak = get_dist(dataTraining)
 #for data in jarak:
 #    print(data)
 
-kernel = get_kernel_rbf(jarak,0.7)
+kernel = get_kernel_rbf(jarak,sigma)
 #for data in kernel:
 #    print(data)
 
-hessian_matrix = get_hessian(kernel,0.1)
+hessian_matrix = get_hessian(kernel,lamda)
 #for data in hessian_matrix:
 #    print(data)
 
@@ -134,19 +156,27 @@ y_prediksi = [0.0] * len(dataTraining)
 x = 0
 min_mse = 999999
 iterate = True
-while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 100)):
+#while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 2)):
+while(iterate):
+    #print(x)
 #while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 1000) and (iterate)):
     # 2.1 : Compute Ei
     #print("")
     #print("Iterasi " + str(x))
     y = np.transpose(dataTraining)[3]
+    #print(y)
     for i in range(len(jarak)):
-        sum_prod = np.sum([a*(b-c) for a,b,c in zip(jarak[i], alpha_star, alpha)])
-        E_value[i] = y[i] + sum_prod
+        sum_prod = np.sum([a*(b-c) for a,b,c in zip(hessian_matrix[i], alpha_star, alpha)])
+        E_value[i] = y[i] - sum_prod
+    #print("E Value")
+    #print(E_value)
     
     # 2.2 : Compute delta alpha and delta alpha star    
     delta_alpha_star = [min(max(gamma*(E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha_star)]
     delta_alpha = [min(max(gamma*(-E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha)]
+    #print("Delta Alpha Star")
+    #print(delta_alpha_star)
+    
     alpha_star = alpha_star + delta_alpha_star
     
     # 2.3 : Compute new alpha and alpha star
@@ -158,14 +188,18 @@ while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x
     #print(max(delta_alpha))
     for i in range(len(y_prediksi)):
         y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
-    if (min_mse > calc_MSE(y_prediksi, y)):
-        min_mse = calc_MSE(y_prediksi, y)
-    else:
+        
+    if(((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon)) or (x > iter_max)):
         iterate = False
+        
+    #if (min_mse > calc_MSE(y_prediksi, y)):
+        #min_mse = calc_MSE(y_prediksi, y)
+    #else:
+        #iterate = False
         #print("Iterasi ke-" + str(x-1))
     #print(min_mse)
     x = x+1
-
+print("ITERASI = "+str(x))
 # Find the result of prediction
 #print("Hasil Prediksi")
 #print(np.sum(alpha_star))
@@ -190,5 +224,11 @@ def get_input_data():
     return json.dumps(dataAll)
 def get_distance():
     return jarak
-def get_hessian():
-    return hessian_matrix
+
+#print(y)
+#print(hessian_matrix)
+
+
+#def get_hessian():
+#    return hessian_matrix
+    
