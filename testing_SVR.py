@@ -50,6 +50,7 @@ print("EPSILON = " + str(tr.epsilon))
 print("cLR = " + str(tr.cLR))
 
 # plotting process
+print(y_pred_all)
 plt.plot(thn, y_pred_all, color="red", label="Prediksi")
 plt.plot(thn, np.transpose(data_normal)[3], color="green", label="Aktual")
 plt.legend()

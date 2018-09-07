@@ -1,5 +1,5 @@
 <?php
-require_once('db.php');
+// require_once('db.php');
 $pyscript = 'C:\\xampp\\htdocs\\estimasi\\training_SVR.py';
 $python = 'C:\\Users\\USER\\Anaconda2\\python.exe';
 $cmd = "$python $pyscript";
@@ -9,14 +9,14 @@ $cmd = "$python $pyscript";
 //exec("$cmd", $output);
 //$input_str = shell_exec("python -c \"import training_SVR; print training_SVR.get_input_data()\"");
 
-$input = json_decode(shell_exec("python -c \"import training_SVR; print training_SVR.get_input_data()\""), true);
+// $input = json_decode(shell_exec("python -c \"import training_SVR; print training_SVR.get_input_data()\""), true);
 // print_r($input);
 //echo "<br>";
 ?>
 <!DOCTYPE html>
 <html lang="zxx">
 <head>
-<title>Dinas Tanam Pangan Holtikultura dan Perkebunan Kabupaten Malang</title>
+<title>Dinas Tanaman Pangan Holtikultura dan Perkebunan Kabupaten Malang</title>
 <!-- Meta tag Keywords -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -24,13 +24,13 @@ $input = json_decode(shell_exec("python -c \"import training_SVR; print training
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
 		function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- //Meta tag Keywords -->
+
 <style media="screen">
 	.container {
 		font-size: 16px;
 		color: black;
 		font-weight: bold;
 		text-align: center;
-
 	}
 
 </style>
@@ -49,7 +49,8 @@ $input = json_decode(shell_exec("python -c \"import training_SVR; print training
 </head>
 <body>
 <!-- header -->
-<div id="demo-1" data-zs-src='["images/1.jpg", "images/2.jpeg", "images/3.jpg","images/4.jpg","images/5.png","images/6.jpg"]' data-zs-overlay="dots">
+<!-- <div id="demo-1" data-zs-src='["images/1.jpg", "images/2.jpeg", "images/3.jpg","images/4.jpg","images/5.png","images/6.jpg"]' data-zs-overlay="dots"> -->
+<div id="demo-1">
 	<div class="demo-inner-content">
 		<div class="header-nav">
 			<nav class="navbar navbar-default">
@@ -101,24 +102,44 @@ $input = json_decode(shell_exec("python -c \"import training_SVR; print training
 				1. Kecukupan pangan warga terpenuhi,<br>
 				2. Memberikan gambaran Dinas untuk melakukan tindakan,<br>
 				3. Estimasi produksi untuk memberikan hasil yang optimal. </p>
-		M<a href="#" data-toggle="modal" data-target="#myModal" class="hvr-wobble-skew read">Read More</a>
+		<a href="#" data-toggle="modal" data-target="#myModal" class="read">Read More</a>
 		</div>
 		<!-- //banner-info -->
 		<!-- model -->
 		<div class="tooltip-content">
-			<div class="modal fade features-modal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal fade features-modal" id="testPadi" tabindex="-1" role="dialog" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							<h4 class="modal-title">ESTIMASI PANGAN</h4>
+							<h4 class="modal-title">ESTIMASI PRODUKSI PADI</h4>
 						</div>
 						<div class="modal-body">
-							<img src="images/GRID.jpg" alt="Hitech Info">
-							<p>Dengan estimasi terhadap hasil produksi tanaman, manfaat yang dihasilkan antara lain :<br>
-								1. Kecukupan pangan warga terpenuhi,<br>
-								2. Memberikan gambaran Dinas untuk melakukan tindakan,<br>
-								3. Estimasi produksi untuk memberikan hasil yang optimal. </p>
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="control-label col-sm-4">Luas Tanam:</label>
+									<div class="col-sm-8">
+										<input type="number" class="form-control" placeholder="Luas Tanam" id="tanam_padi">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-4">Jumlah Penduduk:</label>
+									<div class="col-sm-8">
+										<input type="number" class="form-control" placeholder="Jumlah Penduduk" id="penduduk">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-4">Luas Lahan (Sawah):</label>
+									<div class="col-sm-8">
+										<input type="number" class="form-control" placeholder="Luas Lahan (Sawah)" id="luas_lahan">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-offset-6 col-sm-6">
+										<button type="submit" class="btn btn-default">ESTIMASI</button>
+									</div>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -135,7 +156,7 @@ $input = json_decode(shell_exec("python -c \"import training_SVR; print training
 		<div class="service-grids">
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<a href="./isiservice"><div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#testPadi"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
 					</div></a>
 					<h4>PADI</h4>
@@ -196,7 +217,7 @@ $input = json_decode(shell_exec("python -c \"import training_SVR; print training
 </div>
 <!-- //services -->
 <!-- isi service -->
-<div class="isiservice w3layouts-agileinfo" id="isiservice">
+<div class="w3layouts-agileinfo" id="isiservice">
 	<h3 class="agile-title">MULAI ESTIMASI</h3>
 	<div class="container">
 		<div class="isiservice-top w3ls-agile">
@@ -211,27 +232,22 @@ $input = json_decode(shell_exec("python -c \"import training_SVR; print training
 						<td>Produksi (Y)</td>
 					</tr>
 					<?php 
-					$x = 1;
-					foreach ($input as $i) {
-						mysqli_query($link, "INSERT INTO dataAll VALUES ('".$x."', '".$i[0]."', '".$i[1]."', '".$i[2]."', '".$i[3]."')");
-						echo '<tr>';
-						echo '<td>'.$i[0].'</td>';
-						echo '<td>'.$i[1].'</td>';
-						echo '<td>'.$i[2].'</td>';
-						echo '<td>'.$i[3].'</td>';
-						echo '</tr>';
-						$x++;
-					}
-					mysqli_close($link)
-					?>
-						Tahun	:<input name="tahun" type="number" min="1" max="100000000" step="20" /><br>
-						Jumlah Penduduk	:<input name="jumlah penduduk" type="number" min="1" max="100000000" step="20"/><br>
-            Luas Tanam	:<input name="luas tanam" type="number" min="1" max="100000000" step="20"/><br>
-						Luas Lahan	:<input name="luas lahan" type="number" min="1" max="100000000" step="20"/><br>
-						Produksi	:<input name="tahun" type="number" min="1" max="100000000" step="20"/><br>
-						<button id="button" class="Button">ESTIMASI</button>
+					// $x = 1;
+					// foreach ($input as $i) {
+					// 	mysqli_query($link, "INSERT INTO dataAll VALUES ('".$x."', '".$i[0]."', '".$i[1]."', '".$i[2]."', '".$i[3]."')");
+					// 	echo '<tr>';
+					// 	echo '<td>'.$i[0].'</td>';
+					// 	echo '<td>'.$i[1].'</td>';
+					// 	echo '<td>'.$i[2].'</td>';
+					// 	echo '<td>'.$i[3].'</td>';
+					// 	echo '</tr>';
+					// 	$x++;
+					// }
+					// mysqli_close($link)
+					?>											
 				</table>
-       </form>
+				<button id="button" class="Button" data-toggle="modal" data-target="#myModal">ESTIMASI</button>
+       		</form>
 			<div class="clearfix"> </div>
 		</div>
 	</div>

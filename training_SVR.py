@@ -190,6 +190,9 @@ while(iterate):
         y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
         
     if(((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon)) or (x > iter_max)):
+        print(delta_alpha_star)
+        print(delta_alpha)
+        print([a-b for a,b in zip(alpha_star, alpha)])
         iterate = False
         
     #if (min_mse > calc_MSE(y_prediksi, y)):
