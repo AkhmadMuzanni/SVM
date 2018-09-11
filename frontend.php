@@ -98,16 +98,14 @@ $cmd = "$python $pyscript";
 		<!-- banner-info -->
 		<div class="agile-baner-info-w3ls">
 			<h3>Ready For <span>ESTIMASI</span></h3>
-			<p>Dengan estimasi terhadap hasil produksi tanaman, manfaat yang dihasilkan antara lain :<br>
-				1. Kecukupan pangan warga terpenuhi,<br>
-				2. Memberikan gambaran Dinas untuk melakukan tindakan,<br>
-				3. Estimasi produksi untuk memberikan hasil yang optimal. </p>
+			<p>EMPATI merupakan akronim dari Sistem Estimasi Bahan Pangan dan Hortikultura yang dikembangkan oleh Dinas 
+			Tanaman Pangan, Hortikultura dan Perkebunan Kabupaten Malang bekerjasama dengan Universitas Brawijaya</p>
 		<a href="#" data-toggle="modal" data-target="#myModal" class="read">Read More</a>
 		</div>
 		<!-- //banner-info -->
 		<!-- model -->
 		<div class="tooltip-content">
-			<div class="modal fade features-modal" id="testPadi" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal fade features-modal" id="modalInput" tabindex="-1" role="dialog" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -162,7 +160,7 @@ $cmd = "$python $pyscript";
 		<div class="service-grids">
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<a href="#" data-toggle="modal" data-target="#testPadi"><div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#modalInput" id="btn_padi"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
 					</div></a>
 					<h4>PADI</h4>
@@ -171,18 +169,18 @@ $cmd = "$python $pyscript";
 			</div>
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#modalInput" id="btn_jagung"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
-					</div>
+					</div></a>
 					<h4>JAGUNG</h4>
 					<p>Tekan Button Padi untuk Estimasi Hasil JAGUNG.</p>
 				</div>
 			</div>
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#modalInput" id="btn_kedelai"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
-					</div>
+					</div></a>
 					<h4>KEDELAI</h4>
 					<p>Tekan Button KEDELAI untuk Estimasi Hasil KEDELAI.</p>
 				</div>
@@ -192,27 +190,27 @@ $cmd = "$python $pyscript";
 		<div class="service-grids ser2">
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#modalInput" id="btn_bawang_merah"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
-					</div>
+					</div></a>
 					<h4>BAWANG MERAH</h4>
 					<p>Tekan Button BAWANG MERAH untuk Estimasi Hasil BAWANG MERAH.</p>
 				</div>
 			</div>
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#modalInput" id="btn_cabe_besar"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
-					</div>
+					</div></a>
 					<h4>CABE RAWIT</h4>
 					<p>Tekan Button CABE RAWIT untuk Estimasi Hasil CABE RAWIT.</p>
 				</div>
 			</div>
 			<div class="col-xs-4 ser-grid">
 				<div class="ser-top">
-					<div class="con hvr-shutter-in-horizontal">
+					<a href="#" data-toggle="modal" data-target="#modalInput" id="btn_cabe_kecil"><div class="con hvr-shutter-in-horizontal">
 						<i class="fa fa-arrow-down" aria-hidden="true"></i>
-					</div>
+					</div></a>
 					<h4>CABE BESAR</h4>
 					<p>Tekan Button CABE BESAR untuk Estimasi Hasil CABE BESAR.</p>
 				</div>
@@ -221,44 +219,6 @@ $cmd = "$python $pyscript";
 		</div>
 	</div>
 </div>
-<!-- //services -->
-<!-- isi service -->
-<div class="w3layouts-agileinfo" id="isiservice">
-	<h3 class="agile-title">MULAI ESTIMASI</h3>
-	<div class="container">
-		<div class="isiservice-top w3ls-agile">
-			<h3 align="center" >INPUT DATA</h3>
-			<!-- <table border=0> -->
-	  		<form action="output.php" method="post">
-				<table border=0>
-					<tr>
-						<td>Luas Tanam (X1)</td>
-						<td>Jumlah Penduduk (X2)</td>
-						<td>Luas Lahan (X3)</td>
-						<td>Produksi (Y)</td>
-					</tr>
-					<?php 
-					// $x = 1;
-					// foreach ($input as $i) {
-					// 	mysqli_query($link, "INSERT INTO dataAll VALUES ('".$x."', '".$i[0]."', '".$i[1]."', '".$i[2]."', '".$i[3]."')");
-					// 	echo '<tr>';
-					// 	echo '<td>'.$i[0].'</td>';
-					// 	echo '<td>'.$i[1].'</td>';
-					// 	echo '<td>'.$i[2].'</td>';
-					// 	echo '<td>'.$i[3].'</td>';
-					// 	echo '</tr>';
-					// 	$x++;
-					// }
-					// mysqli_close($link)
-					?>											
-				</table>
-				<button id="button" class="Button" data-toggle="modal" data-target="#myModal">ESTIMASI</button>
-       		</form>
-			<div class="clearfix"> </div>
-		</div>
-	</div>
-</div>
-<!--  isi service -->
 <!-- gallery -->
 <div id="gallery" class="portfolio">
 	<div class="container">
@@ -441,6 +401,24 @@ $cmd = "$python $pyscript";
 			event.preventDefault();
 			$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
 		});
+	});
+	$('#btn_padi').on('click',function(){
+		document.getElementById("komoditas").value = "PADI";
+	});
+	$('#btn_jagung').on('click',function(){
+		document.getElementById("komoditas").value = "JAGUNG";
+	});
+	$('#btn_kedelai').on('click',function(){
+		document.getElementById("komoditas").value = "KEDELAI";
+	});
+	$('#btn_bawang_merah').on('click',function(){
+		document.getElementById("komoditas").value = "BAWANG MERAH";
+	});
+	$('#btn_cabe_besar').on('click',function(){
+		document.getElementById("komoditas").value = "CABE BESAR";
+	});
+	$('#btn_cabe_kecil').on('click',function(){
+		document.getElementById("komoditas").value = "CABE KECIL";
 	});
 </script>
 <!-- //end-smooth-scrolling -->

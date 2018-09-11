@@ -8,11 +8,14 @@ Created on Sat Aug 11 21:48:34 2018
 import csv
 import numpy as np
 import json
+import time
+import mysql.connector as ms
 #import mysql.connector as msql
 
 #db = msql.connect(host="localhost",user="root",passwd="",database="estimasi")
 
 # method read_csv for read csv file and save it to array
+
 def read_csv(file_name):
     array_2D = []
     with open(file_name, 'rb') as csvfile:
@@ -92,146 +95,193 @@ def calc_MSE(prediction, actual):
         res[i] = np.power((actual[i] - prediction[i]),2)
     return np.average(res)
 
+def update_db(komoditas, d_alpha):
+    conn = ms.connect(user='root', password='', host='localhost', database='estimasi')
+    cursor = conn.cursor()
+    str_alpha = "alpha_"+komoditas
+    queryDelete = """Delete from """+str_alpha
+    cursor.execute(queryDelete)
+    add_alpha = """INSERT INTO """+str_alpha+""" VALUES (%s)"""
+    print(add_alpha)
+    
+    #alpha = [2, -2.000338880028326, -1.7484869882343739, -3.743523156579997, 1.7120601398098891, 7.1781298102175075, 4.256270656989639, 0.9214269066068619, -9.542214992186763, 0.2558967213865766, -1.6131547996969597, 0.10469222399301072, 3.514537248721711, -0.15861476503715854]
+    for alpha_i in d_alpha:
+        print(alpha_i)
+        cursor.execute(add_alpha,((alpha_i.tolist()),))
+    conn.commit()
+    conn.close()
 
+def select_db(komoditas):    
+    conn = ms.connect(user='root', password='', host='localhost', database='estimasi')
+    cursor = conn.cursor()
+    querySelect = """SELECT * FROM """+ komoditas    
+    cursor.execute(querySelect)
+    dataKomoditas = []
+    res_tahun = []
+    for (tahun, luas_tanam, jml_penduduk, luas_lahan, produksi) in cursor:
+        dataKomoditas.append([luas_tanam, jml_penduduk, luas_lahan, produksi])
+        res_tahun.append(tahun)
+        #print("{}, {}, {}, {}, {}".format(tahun,luas_tanam,jml_penduduk,luas_lahan, produksi))
+    return dataKomoditas, res_tahun
+    conn.close()
 
 # MAIN
-
-C_value = 1000
-cLR = 0.1
-epsilon = 0.0001
+start_time = time.time()
+C_value = 10000
+cLR = 0.05
+#epsilon = 0.0001
+epsilon = 0.00001
 sigma = 0.3
 lamda = 0.1
 iter_max =50000
-
-dataAll = read_csv("dataTraining.csv")
-
-
-
-#for data in dataTraining:
-#    print(data)
-
-#cursor = db.cursor()
-#sql = "INSERT INTO dataAll VALUES (%d %d %d %d %d)"
-#val = (1, 2, 3, 4, 5)
-#cursor.exceute(sql, val)
-#db.commit
-
-
-dataTraining, dataTesting = normalization(dataAll, 0.8)
-x_training = ((np.array(dataTraining))[:,:3]).tolist()
-x_testing = ((np.array(dataTesting))[:,:3]).tolist()
-y_training = ((np.array(dataTraining))[:,-1]).tolist()
-y_testing = ((np.array(dataTesting))[:,-1]).tolist()
-#print(x_training)
-#print(x_testing)
-
-#for data in data_normalisasi:
-#    print(data)
-
-jarak = get_dist(dataTraining)
-#for data in jarak:
-#    print(data)
-
-kernel = get_kernel_rbf(jarak,sigma)
-#for data in kernel:
-#    print(data)
-
-hessian_matrix = get_hessian(kernel,lamda)
-#for data in hessian_matrix:
-#    print(data)
-
-# SEQUENTIAL LEARNING
-
-# Step 1 : Initialize alpha and alpha_star with 0
-alpha = [0] * len(dataTraining)
-alpha_star = [0] * len(dataTraining)
-E_value = [0] * len(dataTraining)
-delta_alpha = [0.0] * len(dataTraining)
-delta_alpha_star = [0.0] * len(dataTraining)
-gamma = cLR / get_max(hessian_matrix)
-
-y_prediksi = [0.0] * len(dataTraining)
-# Step 2 : For each training point, compute :
-#for x in range(10)
-x = 0
-min_mse = 999999
-iterate = True
-#while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 2)):
-while(iterate):
-    #print(x)
-#while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 1000) and (iterate)):
-    # 2.1 : Compute Ei
-    #print("")
-    #print("Iterasi " + str(x))
-    y = np.transpose(dataTraining)[3]
-    #print(y)
-    for i in range(len(jarak)):
-        sum_prod = np.sum([a*(b-c) for a,b,c in zip(hessian_matrix[i], alpha_star, alpha)])
-        E_value[i] = y[i] - sum_prod
-    #print("E Value")
-    #print(E_value)
+dataTraining = []
+dataTesting = []
+alpha = []
+alpha_star = []
+max_data = 0
+min_data = 0
+y_prediksi = []
+tahun = []
+def main(input_komoditas):
+    komoditas = input_komoditas
     
-    # 2.2 : Compute delta alpha and delta alpha star    
-    delta_alpha_star = [min(max(gamma*(E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha_star)]
-    delta_alpha = [min(max(gamma*(-E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha)]
-    #print("Delta Alpha Star")
+    #dataAll = read_csv("dataTraining.csv")
+    dataAll, tahun = select_db(komoditas)
+    
+    
+    
+    #for data in dataTraining:
+    #    print(data)
+    
+    #cursor = db.cursor()
+    #sql = "INSERT INTO dataAll VALUES (%d %d %d %d %d)"
+    #val = (1, 2, 3, 4, 5)
+    #cursor.exceute(sql, val)
+    #db.commit
+    
+    
+    dataTraining, dataTesting = normalization(dataAll, 1)
+    x_training = ((np.array(dataTraining))[:,:3]).tolist()
+    x_testing = ((np.array(dataTesting))[:,:3]).tolist()
+    y_training = ((np.array(dataTraining))[:,-1]).tolist()
+    y_testing = ((np.array(dataTesting))[:,-1]).tolist()
+    #print(x_training)
+    #print(x_testing)
+    
+    #for data in data_normalisasi:
+    #    print(data)
+    
+    jarak = get_dist(dataTraining)
+    #for data in jarak:
+    #    print(data)
+    
+    kernel = get_kernel_rbf(jarak,sigma)
+    #for data in kernel:
+    #    print(data)
+    
+    hessian_matrix = get_hessian(kernel,lamda)
+    #for data in hessian_matrix:
+    #    print(data)
+    
+    # SEQUENTIAL LEARNING
+    
+    # Step 1 : Initialize alpha and alpha_star with 0
+    alpha = [0] * len(dataTraining)
+    alpha_star = [0] * len(dataTraining)
+    E_value = [0] * len(dataTraining)
+    delta_alpha = [0.0] * len(dataTraining)
+    delta_alpha_star = [0.0] * len(dataTraining)
+    gamma = cLR / get_max(hessian_matrix)
+    
+    y_prediksi = [0.0] * len(dataTraining)
+    # Step 2 : For each training point, compute :
+    #for x in range(10)
+    x = 0
+    min_mse = 999999
+    iterate = True
+    #while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 2)):
+    while(iterate):
+        #print(x)
+    #while ((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon) and (x < 1000) and (iterate)):
+        # 2.1 : Compute Ei
+        #print("")
+        #print("Iterasi " + str(x))
+        y = np.transpose(dataTraining)[3]
+        #print(y)
+        for i in range(len(jarak)):
+            sum_prod = np.sum([(b-c)*a for a,b,c in zip(hessian_matrix[i], alpha_star, alpha)])
+            E_value[i] = y[i] - sum_prod
+        #print("E Value")
+        #print(E_value)
+        
+        # 2.2 : Compute delta alpha and delta alpha star    
+        delta_alpha_star = [min(max(gamma*(E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha_star)]
+        delta_alpha = [min(max(gamma*(-E - epsilon), -A), C_value - A) for E,A in zip(E_value, alpha)]
+        #print("Delta Alpha Star")
+        #print(delta_alpha_star)
+        
+        #alpha_star = alpha_star + delta_alpha_star
+        
+        
+        # 2.3 : Compute new alpha and alpha star
+        alpha = [a + b for a,b in zip(alpha, delta_alpha)]
+        alpha_star = [a + b for a,b in zip(alpha_star, delta_alpha_star)]
+        #print(alpha_star)
+        #print(alpha)
+        #print(max(delta_alpha_star))
+        #print(max(delta_alpha))
+        for i in range(len(y_prediksi)):
+            y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
+            
+        if(((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon)) or (x > iter_max)):
+            print(delta_alpha_star)
+            print(delta_alpha)
+            d_alpha = [a-b for a,b in zip(alpha_star, alpha)]
+            #print(type(d_alpha[0]))
+            iterate = False
+            
+        #if (min_mse > calc_MSE(y_prediksi, y)):
+            #min_mse = calc_MSE(y_prediksi, y)
+        #else:
+            #iterate = False
+            #print("Iterasi ke-" + str(x-1))
+        #print(min_mse)
+        x = x+1
+    print("ITERASI = "+str(x))
+    # Find the result of prediction
+    #print("Hasil Prediksi")
+    #print(np.sum(alpha_star))
+    
+    max_data = float(get_max(dataAll))
+    min_data = float(get_min(dataAll))
+    y_denorm = np.zeros_like(y_prediksi)
+    for i in range(len(y_prediksi)):
+        y_denorm[i] = y_prediksi[i] * (max_data-min_data) + min_data
+        
+    update_db(komoditas, d_alpha)
+    #dataKomoditas, tahun = select_db("beras")
+    #print(dataKomoditas)
+    #print(tahun)
+    
     #print(delta_alpha_star)
-    
-    alpha_star = alpha_star + delta_alpha_star
-    
-    # 2.3 : Compute new alpha and alpha star
-    alpha = [a + b for a,b in zip(alpha, delta_alpha)]
-    alpha_star = [a + b for a,b in zip(alpha_star, delta_alpha_star)]
+    #print(delta_alpha)
     #print(alpha_star)
     #print(alpha)
-    #print(max(delta_alpha_star))
-    #print(max(delta_alpha))
-    for i in range(len(y_prediksi)):
-        y_prediksi[i] = np.sum([H*(alp_s - alp) for H,alp_s,alp in zip(hessian_matrix[i],alpha_star,alpha)])
-        
-    if(((max(delta_alpha_star) < epsilon) and (max(delta_alpha) < epsilon)) or (x > iter_max)):
-        print(delta_alpha_star)
-        print(delta_alpha)
-        print([a-b for a,b in zip(alpha_star, alpha)])
-        iterate = False
-        
-    #if (min_mse > calc_MSE(y_prediksi, y)):
-        #min_mse = calc_MSE(y_prediksi, y)
-    #else:
-        #iterate = False
-        #print("Iterasi ke-" + str(x-1))
+    #print(y_prediksi)
+    #print(y_denorm)
     #print(min_mse)
-    x = x+1
-print("ITERASI = "+str(x))
-# Find the result of prediction
-#print("Hasil Prediksi")
-#print(np.sum(alpha_star))
-
-max_data = float(get_max(dataAll))
-min_data = float(get_min(dataAll))
-y_denorm = np.zeros_like(y_prediksi)
-for i in range(len(y_prediksi)):
-    y_denorm[i] = y_prediksi[i] * (max_data-min_data) + min_data
-
-#print(delta_alpha_star)
-#print(delta_alpha)
-#print(alpha_star)
-#print(alpha)
-#print(y_prediksi)
-#print(y_denorm)
-#print(min_mse)
+        
+    def get_prediksi(temp):
+        return temp
+    def get_input_data():
+        return json.dumps(dataAll)
+    def get_distance():
+        return jarak
+    return(dataTraining,dataTesting,alpha,alpha_star,max_data,min_data,y_prediksi,tahun)
+    #print(y)
+    #print(hessian_matrix)
     
-def get_prediksi(temp):
-    return temp
-def get_input_data():
-    return json.dumps(dataAll)
-def get_distance():
-    return jarak
-
-#print(y)
-#print(hessian_matrix)
-
-
-#def get_hessian():
-#    return hessian_matrix
     
+    #def get_hessian():
+    #    return hessian_matrix
+dataTraining,dataTesting,alpha,alpha_star,max_data,min_data,y_prediksi,tahun = main("beras")

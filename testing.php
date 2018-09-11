@@ -4,7 +4,7 @@
 	$lambda = 0.1;
 	$max_value = 2576596;
 	$min_value = 45888;
-	$alpha = array(
+	$alpha_padi = array(
 		14.09446540328213, 
 		-14.042057438070751, 
 		-18.925819110730693, 
@@ -16,6 +16,7 @@
 		-73.9223889057608, 
 		11.98775314182274, 
 		3.2600614453296224);
+	$alpha = $alpha_padi;
 	// print_r($alpha);	
 
 	// echo "<br>";
@@ -83,8 +84,4 @@
 	echo "<br>";
 
 	// echo $_POST["luas_tanam"];
-
-
-
-
 ?>
